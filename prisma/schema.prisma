@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Ballot {
+  id         String      @id @default(cuid())
+  electionId String      @unique
+  Election   Election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  Candidate  Candidate[]
+  Question   Question[]
+}
+
+model Candidate {
+  id       String  @id @default(cuid())
+  name     String
+  ballotId String
+  image    String?
+  notes    String?
+  position String?
+  resume   String?
+  Ballot   Ballot  @relation(fields: [ballotId], references: [id], onDelete: Cascade)
+}
+
+model Election {
+  id           String  @id @default(cuid())
+  name         String
+  description  String
+  status       String  @default("PENDING")
+  userId       String
+  electionDate String
+  ballotId     String?
+  electionType String
+  Ballot       Ballot?
+  User         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Voter        Voter[]
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model Question {
+  id       String  @id @default(cuid())
+  question String
+  ballotId String
+  option1  String
+  option2  String
+  option3  String?
+  option4  String?
+  Ballot   Ballot  @relation(fields: [ballotId], references: [id], onDelete: Cascade)
+}
+
+model TwoFactorConfirmation {
+  id     String @id @default(cuid())
+  userId String @unique
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TwoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model User {
+  id                    String                 @id @default(cuid())
+  name                  String?
+  email                 String?                @unique
+  emailVerified         DateTime?
+  image                 String?
+  password              String?
+  role                  UserRole               @default(USER)
+  isTwoFactorEnabled    Boolean                @default(false)
+  Account               Account[]
+  Election              Election[]
+  TwoFactorConfirmation TwoFactorConfirmation?
+}
+
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model Voter {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  electionId String
+  name       String    @unique
+  voterId    String    @unique
+  voterKey   String
+  hasVoted   DateTime?
+  Election   Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+
+  @@unique([email, electionId])
+}
+
+enum ElectionStatus {
+  PENDING
+  OPEN
+  CLOSED
+}
+
+enum ElectionType {
+  ELECTION
+  POLL
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  VOTER
+  SUPADMIN
+}
