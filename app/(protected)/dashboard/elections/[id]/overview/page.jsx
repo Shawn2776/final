@@ -28,35 +28,35 @@ const OverviewPage = async ({ params }) => {
   return (
     <div className="w-full">
       <ElectionHeader election={election} />
-      <div className="w-full flex justify-between px-4 pt-4 pb-4 mb-4">
+      <div className="flex justify-between w-full px-4 pt-4 pb-4 mb-4">
         <div className="w-full">
           <span className="mr-4">Description:</span>
-          <span className="bg-highlight px-2 rounded">
+          <span className="px-2 rounded bg-highlight">
             {election.description}
           </span>
         </div>
-        <div className="text-center w-full">
+        <div className="w-full text-center">
           <span className="mr-4">Date Range:</span>
-          <span className="bg-highlight px-2 rounded">
+          <span className="px-2 rounded bg-highlight">
             {election.electionDate}
           </span>
         </div>
-        <div className="w-full text-end capitalize">
+        <div className="w-full capitalize text-end">
           <span className="mr-4">Election Type:</span>
-          <span className="bg-highlight px-2 rounded capitalize">
+          <span className="px-2 capitalize rounded bg-highlight">
             {election.electionType}
           </span>
         </div>
       </div>
 
       {election.electionType === "election" ? (
-        <div className="w-full grid grid-cols-2 gap-4">
+        <div className="grid w-full grid-cols-2 gap-4">
           <div className="w-full col-span-1 text-center bg-bg py-4 border-highlight border min-h-[400px]">
             <div>Candidates</div>
             {ballot?.ballot?.Candidate.length === 0 ? (
               <div>No Candidates</div>
             ) : (
-              <div className="p-2 bg-bgSoft m-4">
+              <div className="p-2 m-4 bg-bgSoft">
                 <Table>
                   <TableCaption>A list of Candidates.</TableCaption>
                   <TableHeader>
@@ -85,24 +85,45 @@ const OverviewPage = async ({ params }) => {
               </div>
             )}
           </div>
-          <div className="w-full col-span-1 text-center bg-bg py-4">
+          <div className="w-full col-span-1 text-center bg-bg py-4 border-highlight border min-h-[400px]">
             <div>Voters</div>
-            <hr className="border-t-2 border-gray-200 my-4" />
             {voters?.length === 0 ? (
               <div>No Voters</div>
             ) : (
-              <div>
-                {voters?.Voter?.map((voter) => (
-                  <div
-                    key={voter.id}
-                    className="flex justify-between px-8 bg-bgSoft p-2 mx-2 hover:bg-highlight cursor-pointer my-2"
-                  >
-                    <div>{voter.name}</div>
-                    <div>{voter.email}</div>
-                    <div>{voter.voterId}</div>
-                    <div>{voter.voterKey}</div>
-                  </div>
-                ))}
+              <div className="p-2 m-4 bg-bgSoft">
+                <Table>
+                  <TableCaption>A list of Voters.</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Voter ID</TableHead>
+                      <TableHead>Voter Key</TableHead>
+                      <TableHead>Has Voted</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {voters?.Voter?.map((voter) => (
+                      <TableRow key={voter.id}>
+                        <TableCell className="text-start">
+                          {voter.name}
+                        </TableCell>
+                        <TableCell className="text-start">
+                          {voter.email}
+                        </TableCell>
+                        <TableCell className="text-start">
+                          {voter.voterId}
+                        </TableCell>
+                        <TableCell className="text-start">
+                          {voter.voterKey}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {voter.hasVoted ? "Yes" : "No"}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             )}
           </div>
