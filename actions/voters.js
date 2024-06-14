@@ -132,3 +132,26 @@ export const deleteVoter = async (electionId, voterId) => {
 
   return { success: "Voter deleted successfully", electionId };
 };
+
+export const getVotersByElectionId = async (electionId) => {
+  const { user } = await auth();
+
+  if (!user) {
+    return { error: "Unauthorized" };
+  }
+
+  const election = await db.election.findUnique({
+    where: {
+      id: electionId,
+    },
+    include: {
+      Voter: true,
+    },
+  });
+
+  if (user.id !== election.userId) {
+    return { error: "Unauthorized" };
+  }
+
+  return election;
+};

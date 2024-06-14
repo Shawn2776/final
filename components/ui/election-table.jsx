@@ -11,6 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "./table";
+import { FcViewDetails } from "react-icons/fc";
+import { MdDelete } from "react-icons/md";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
 
 const ElectionTable = ({ elections }) => {
   const handleAddElection = async () => {
@@ -40,6 +48,7 @@ const ElectionTable = ({ elections }) => {
           <TableHead>Status</TableHead>
           <TableHead>Date</TableHead>
           <TableHead>Election Type</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -51,6 +60,27 @@ const ElectionTable = ({ elections }) => {
             <TableCell>{election.electionDate}</TableCell>
             <TableCell className="capitalize">
               {election.electionType}
+            </TableCell>
+            <TableCell className="flex gap-4">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Link
+                      key={election.id}
+                      href={`/dashboard/elections/${election.id}/overview`}
+                    >
+                      <FcViewDetails />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>View Details</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <Link href="/delete">
+                <MdDelete />
+              </Link>
             </TableCell>
           </TableRow>
         ))}

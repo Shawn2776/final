@@ -22,7 +22,7 @@ module.exports = {
         bgSoft: "#182237",
         textSoft: "B7BAC1",
         text: "#000",
-        highlight: "2E374A",
+        highlight: "#2E374A",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

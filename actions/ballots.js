@@ -39,7 +39,7 @@ export const getBallotByElectionId = async (electionId) => {
       id: electionId,
     },
     include: {
-      ballot: true,
+      Ballot: true,
     },
   });
 
@@ -56,8 +56,8 @@ export const getBallotByElectionId = async (electionId) => {
       id: election.ballotId,
     },
     include: {
-      candidates: true,
-      questions: true,
+      Candidate: true,
+      Question: true,
     },
   });
 
