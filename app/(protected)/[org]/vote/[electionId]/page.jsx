@@ -8,7 +8,7 @@ const VotingPage = () => {
   const pathname = usePathname();
 
   const org = pathname.split("/")[1];
-  const electionId = pathname.split("/")[2];
+  const electionId = pathname.split("/")[3];
 
   return (
     <div className="">
