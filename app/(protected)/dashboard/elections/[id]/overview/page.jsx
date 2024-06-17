@@ -2,6 +2,7 @@ import { getBallotByElectionId } from "@/actions/ballots";
 import { getElectionById } from "@/actions/elections";
 import { getVotersByElectionId } from "@/actions/voters";
 import { ElectionHeader } from "@/components/election-header";
+import { Button } from "@/components/ui/button";
 import CandidateTable from "@/components/ui/dashboard/tables/candidate-table";
 import VotersTable from "@/components/ui/dashboard/tables/voters-table";
 import {
@@ -13,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -54,7 +56,16 @@ const OverviewPage = async ({ params }) => {
       {election.electionType === "election" ? (
         <div className="grid w-full grid-cols-2 gap-4">
           <div className="w-full col-span-1 text-center bg-bg py-4 border-highlight border min-h-[400px]">
-            <div>Candidates</div>
+            <div className="flex items-center">
+              <div className="flex justify-end flex-1 text-2xl">Candidates</div>
+              <div className="flex justify-end flex-1 pr-8 text-sm">
+                <Link
+                  href={`/dashboard/elections/${electionId}/candidates/addCandidate`}
+                >
+                  <Button>Add Candidate</Button>
+                </Link>
+              </div>
+            </div>
             {ballot?.ballot?.Candidate.length === 0 ? (
               <div>No Candidates</div>
             ) : (

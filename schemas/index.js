@@ -67,4 +67,5 @@ export const NewCandidateSchema = z.object({
   name: z.string().nonempty("Question is required"),
   position: z.string(),
   notes: z.string(),
+  ballotId: z.optional(z.string()),
 });
