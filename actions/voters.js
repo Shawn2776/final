@@ -35,52 +35,6 @@ export const addVoterToElection = async (values, electionId) => {
 
   const { name, email, voterId, voterKey } = values;
 
-  // Check if voter already exists in the election
-  const existingVoter = await db.voter.findFirst({
-    where: {
-      voterId,
-      electionId,
-    },
-  });
-
-  if (existingVoter) {
-    return { error: "Voter already exists in this election" };
-  }
-
-  // Additional unique checks
-  const existingName = await db.voter.findFirst({
-    where: {
-      name,
-      electionId,
-    },
-  });
-
-  if (existingName) {
-    return { error: "Voter with this name already exists" };
-  }
-
-  const existingEmail = await db.voter.findFirst({
-    where: {
-      email,
-      electionId,
-    },
-  });
-
-  if (existingEmail) {
-    return { error: "Voter with this email already exists" };
-  }
-
-  const existingVoterKey = await db.voter.findFirst({
-    where: {
-      voterKey,
-      electionId,
-    },
-  });
-
-  if (existingVoterKey) {
-    return { error: "Voter with this voter key already exists" };
-  }
-
   try {
     const voter = await db.voter.create({
       data: {
@@ -93,6 +47,10 @@ export const addVoterToElection = async (values, electionId) => {
     });
     return { success: "Voter added successfully", electionId };
   } catch (error) {
+    if (error.code === "P2002") {
+      // Prisma's unique constraint violation error code
+      return { error: "Voter with this detail already exists in the election" };
+    }
     console.log("ERROR: ", error);
     return { error: "Error adding voter" };
   }

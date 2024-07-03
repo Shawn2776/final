@@ -56,6 +56,8 @@ model Election {
   Ballot       Ballot?
   User         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   Voter        Voter[]
+
+  @@index([userId])
 }
 
 model PasswordResetToken {
@@ -118,15 +120,18 @@ model VerificationToken {
 
 model Voter {
   id         String    @id @default(cuid())
-  email      String    @unique
+  email      String
   electionId String
-  name       String    @unique
-  voterId    String    @unique
+  name       String
+  voterId    String
   voterKey   String
   hasVoted   DateTime?
   Election   Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
 
   @@unique([email, electionId])
+  @@unique([name, electionId])
+  @@unique([voterId, electionId])
+  @@unique([voterKey, electionId])
 }
 
 enum ElectionStatus {
