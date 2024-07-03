@@ -17,65 +17,67 @@ export const addVoterToElection = async (values, electionId) => {
     return { error: "Unauthorized" };
   }
 
-  const exisitingElection = await db.election.findUnique({
+  const existingElection = await db.election.findUnique({
     where: {
       id: electionId,
     },
   });
 
   // Check if election exists
-  if (!exisitingElection) {
+  if (!existingElection) {
     return { error: "Election does not exist!" };
   }
 
   // Check if user is authorized to add voter
-  if (exisitingElection.userId !== user.id) {
+  if (existingElection.userId !== user.id) {
     return { error: "Unauthorized" };
   }
 
   const { name, email, voterId, voterKey } = values;
 
-  const exisitingName = await db.voter.findFirst({
-    where: {
-      name,
-      electionId,
-    },
-  });
-
-  if (exisitingName) {
-    return { error: "Voter with this name already exists" };
-  }
-
-  const exisitingEmail = await db.voter.findFirst({
-    where: {
-      email,
-      electionId,
-    },
-  });
-
-  if (exisitingEmail) {
-    return { error: "Voter with this email already exists" };
-  }
-
-  const exisitingVoterId = await db.voter.findFirst({
+  // Check if voter already exists in the election
+  const existingVoter = await db.voter.findFirst({
     where: {
       voterId,
       electionId,
     },
   });
 
-  if (exisitingVoterId) {
-    return { error: "Voter with this voter ID already exists" };
+  if (existingVoter) {
+    return { error: "Voter already exists in this election" };
   }
 
-  const exisitingVoterKey = await db.voter.findFirst({
+  // Additional unique checks
+  const existingName = await db.voter.findFirst({
+    where: {
+      name,
+      electionId,
+    },
+  });
+
+  if (existingName) {
+    return { error: "Voter with this name already exists" };
+  }
+
+  const existingEmail = await db.voter.findFirst({
+    where: {
+      email,
+      electionId,
+    },
+  });
+
+  if (existingEmail) {
+    return { error: "Voter with this email already exists" };
+  }
+
+  const existingVoterKey = await db.voter.findFirst({
     where: {
       voterKey,
       electionId,
     },
   });
 
-  if (exisitingVoterKey) {
+  if (existingVoterKey) {
     return { error: "Voter with this voter key already exists" };
   }
 
@@ -89,12 +91,11 @@ export const addVoterToElection = async (values, electionId) => {
         electionId,
       },
     });
+    return { success: "Voter added successfully", electionId };
   } catch (error) {
     console.log("ERROR: ", error);
     return { error: "Error adding voter" };
   }
-
-  return { success: "Voter added successfully", electionId };
 };
 
 export const deleteVoter = async (electionId, voterId) => {
