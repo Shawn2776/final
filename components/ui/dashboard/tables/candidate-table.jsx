@@ -11,6 +11,7 @@ import {
 
 const CandidateTable = ({ candidates }) => {
   return (
+    // <div className="h-[400px] m-4 overflow-x-hidden overflow-y-auto bg-bgSoft">
     <div className="p-2 m-4 bg-bgSoft">
       <Table>
         <TableCaption>A list of Candidates.</TableCaption>

@@ -1,4 +1,4 @@
-import NewElectionForm from "@/components/new-election-form";
+import NewElectionForm from "@/components/electionForms/new-election-form";
 import React from "react";
 
 const AddElectionPage = () => {

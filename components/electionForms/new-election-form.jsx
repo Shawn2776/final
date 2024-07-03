@@ -5,6 +5,7 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { NewElectionSchema } from "@/schemas";
 import {
   Form,
   FormControl,
@@ -27,27 +28,24 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 import { useRouter } from "next/navigation";
-import FormError from "./form-error";
-import FormSuccess from "./form-success";
-import { NewCandidateSchema } from "@/schemas";
-import { addCandidate } from "@/actions/candidate";
+import FormError from "../form-error";
+import FormSuccess from "../form-success";
 
-const NewCandidateForm = ({ ballot, electionId }) => {
+const NewElectionForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [ballotId, setBallotId] = useState(ballot.id);
 
   const [isPending, startTransition] = useTransition();
 
   const form = useForm({
-    resolver: zodResolver(NewCandidateSchema),
+    resolver: zodResolver(NewElectionSchema),
     defaultValues: {
       name: "",
-      position: "",
-      notes: "",
-      ballotId: ballotId,
+      description: "",
+      electionDate: "",
+      electionType: z.enum(["election", "poll"]),
     },
   });
 
@@ -56,12 +54,12 @@ const NewCandidateForm = ({ ballot, electionId }) => {
       setError("");
       setSuccess("");
 
-      addCandidate(values, ballotId).then((data) => {
+      newElection(values).then((data) => {
         setError(data.error);
         setSuccess(data.success);
 
         if (data.success) {
-          router.push(`/dashboard/elections/${electionId}/overview`);
+          router.push(`/dashboard/elections/${data.election.id}/overview`);
         }
       });
     });
@@ -71,9 +69,9 @@ const NewCandidateForm = ({ ballot, electionId }) => {
 
   return (
     <CardWrapper
-      headerLabel={"New Candidate"}
-      backButtonLabel={"Back to Elections"}
-      backButtonHref={`/dashboard/elections/`}
+      headerLabel={"New Election"}
+      backButtonLabel={"Back to Dashboard"}
+      backButtonHref={"/elections"}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -84,7 +82,7 @@ const NewCandidateForm = ({ ballot, electionId }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Candidate Name</FormLabel>
+                  <FormLabel>Election Name</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="" type="text" />
                   </FormControl>
@@ -96,10 +94,10 @@ const NewCandidateForm = ({ ballot, electionId }) => {
             <FormField
               disabled={isPending}
               control={form.control}
-              name="position"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Position</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="" />
                   </FormControl>
@@ -111,12 +109,12 @@ const NewCandidateForm = ({ ballot, electionId }) => {
             <FormField
               disabled={isPending}
               control={form.control}
-              name="notes"
+              name="electionDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>Date Range</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="" />
+                    <Input {...field} placeholder="5/12/2024 - 5/15/2024" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,24 +122,56 @@ const NewCandidateForm = ({ ballot, electionId }) => {
             />
 
             <FormField
-              disabled
+              disabled={isPending}
               control={form.control}
-              name="ballotId"
+              name="electionType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ballot ID</FormLabel>
+                  <FormLabel>Election Type</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="" />
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Election Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="election">Election</SelectItem>
+                        <SelectItem value="poll">Poll</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* <FormField
+              disabled={isPending}
+              control={form.control}
+              name="electionType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Election Type</FormLabel>
+
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Election Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="election">Election</SelectItem>
+                        <SelectItem value="poll">Poll</SelectItem>
+                      </SelectContent>
+                    </FormControl>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            /> */}
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full ">
-            Create New Candidate
+            Create New Election
           </Button>
         </form>
       </Form>
@@ -149,4 +179,4 @@ const NewCandidateForm = ({ ballot, electionId }) => {
   );
 };
 
-export default NewCandidateForm;
+export default NewElectionForm;

@@ -27,12 +27,15 @@ export const login = async (values) => {
   const { email, password, code } = validatedFields.data;
 
   const existingUser = await getUserByEmail(email);
+  console.log(existingUser);
 
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "Email does not exist!" };
   }
 
+  console.log(existingUser.emailVerified);
   if (!existingUser.emailVerified) {
+    console.log("sending email");
     const verificationToken = await generateVerificationToken(
       existingUser.email
     );

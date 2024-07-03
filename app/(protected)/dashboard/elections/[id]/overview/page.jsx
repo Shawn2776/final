@@ -4,6 +4,7 @@ import { getVotersByElectionId } from "@/actions/voters";
 import { ElectionHeader } from "@/components/election-header";
 import { Button } from "@/components/ui/button";
 import CandidateTable from "@/components/ui/dashboard/tables/candidate-table";
+import QuestionTable from "@/components/ui/dashboard/tables/question-table";
 import VotersTable from "@/components/ui/dashboard/tables/voters-table";
 import {
   Table,
@@ -66,10 +67,41 @@ const OverviewPage = async ({ params }) => {
                 </Link>
               </div>
             </div>
-            {ballot?.ballot?.Candidate.length === 0 ? (
-              <div>No Candidates</div>
+
+            <CandidateTable candidates={ballot.ballot.Candidate} />
+          </div>
+          <div className="w-full col-span-1 text-center bg-bg py-4 border-highlight border min-h-[400px]">
+            <div className="flex items-center">
+              <div className="flex justify-end flex-1 text-2xl">Voters</div>
+              <div className="flex justify-end flex-1 pr-8 text-sm">
+                <Link
+                  href={`/dashboard/elections/${electionId}/voters/addVoter`}
+                >
+                  <Button>Add Voter</Button>
+                </Link>
+              </div>
+            </div>
+
+            <VotersTable voters={voters.Voter} />
+          </div>
+        </div>
+      ) : (
+        <div className="grid w-full grid-cols-2 gap-4">
+          <div className="w-full col-span-1 text-center bg-bg py-4 border-highlight border min-h-[400px]">
+            <div className="flex items-center">
+              <div className="flex justify-end flex-1 text-2xl">Questions</div>
+              <div className="flex justify-end flex-1 pr-8 text-sm">
+                <Link
+                  href={`/dashboard/elections/${electionId}/questions/addQuestion`}
+                >
+                  <Button>Add Question</Button>
+                </Link>
+              </div>
+            </div>
+            {ballot?.ballot?.Question.length === 0 ? (
+              <div>No Questions</div>
             ) : (
-              <CandidateTable candidates={ballot.ballot.Candidate} />
+              <QuestionTable questions={ballot.ballot.Question} />
             )}
           </div>
           <div className="w-full col-span-1 text-center bg-bg py-4 border-highlight border min-h-[400px]">
@@ -80,11 +112,6 @@ const OverviewPage = async ({ params }) => {
               <VotersTable voters={voters.Voter} />
             )}
           </div>
-        </div>
-      ) : (
-        <div className="w-full grid-cols-2 gap-4">
-          <div className="w-full col-span-1">Questions</div>
-          <div className="w-full col-span-1">Results</div>
         </div>
       )}
     </div>

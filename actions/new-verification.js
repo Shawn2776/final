@@ -23,6 +23,7 @@ export const newVerification = async (token) => {
     return { error: "Email does not exist!" };
   }
 
+  console.log("Before", exisitingUser, exisitingToken);
   await db.user.update({
     where: { id: exisitingUser.id },
     data: {
@@ -30,6 +31,7 @@ export const newVerification = async (token) => {
       email: exisitingToken.email,
     },
   });
+  console.log("After", exisitingUser, exisitingToken);
 
   await db.verificationToken.delete({
     where: { id: exisitingToken.id },

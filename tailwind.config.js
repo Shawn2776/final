@@ -18,10 +18,12 @@ module.exports = {
     },
     extend: {
       colors: {
-        bg: "#151C2C",
-        bgSoft: "#182237",
+        // bg: "#151C2C",
+        // bgSoft: "#182237",
+        bg: "#333",
+        bgSoft: "#111",
         textSoft: "B7BAC1",
-        text: "#000",
+        text: "#fff",
         highlight: "#2E374A",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

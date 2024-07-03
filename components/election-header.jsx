@@ -4,7 +4,7 @@ export const ElectionHeader = ({ election }) => {
       <span>{election.name}</span>{" "}
       <span
         className={`text-xs flex justify-center px-2 py-1 border shadow-md rounded ${
-          election.status === "PENDING"
+          election.status === "DEV_MODE"
             ? "bg-orange-400/35 text-orange-800 shadow-orange-800 border-orange-800"
             : election.status === "OPEN"
             ? "bg-emerald-400/35 text-emerald-800 shadow-emerald-800 border-emerald-800"

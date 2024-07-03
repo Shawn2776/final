@@ -48,7 +48,7 @@ model Election {
   id           String  @id @default(cuid())
   name         String
   description  String
-  status       String  @default("PENDING")
+  status       String  @default("DEV_MODE")
   userId       String
   electionDate String
   ballotId     String?
@@ -133,6 +133,8 @@ enum ElectionStatus {
   PENDING
   OPEN
   CLOSED
+  CANCELLED
+  DEV_MODE
 }
 
 enum ElectionType {

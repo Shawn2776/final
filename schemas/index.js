@@ -56,15 +56,16 @@ export const NewBallotSchema = z.object({
 // });
 
 export const NewQuestionSchema = z.object({
-  question: z.string().nonempty("Question is required"),
-  option1: z.string().nonempty("Option 1 is required"),
-  option2: z.string().nonempty("Option 2 is required"),
+  question: z.string().min(1, { message: "Question is required" }),
+  option1: z.string().min(1, { message: "Option 1 is required" }),
+  option2: z.string().min(1, { message: "Option 2 is required" }),
   option3: z.optional(z.string()),
   option4: z.optional(z.string()),
+  ballotId: z.optional(z.string()),
 });
 
 export const NewCandidateSchema = z.object({
-  name: z.string().nonempty("Question is required"),
+  name: z.string().min(1, { message: "Question is required" }),
   position: z.string(),
   notes: z.string(),
   ballotId: z.optional(z.string()),

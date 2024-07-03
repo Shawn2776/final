@@ -1,14 +1,15 @@
-import NewCandidateForm from "@/components/electionForms/new-candidate-form";
+import NewQuestionForm from "@/components/electionForms/new-question-form";
 import db from "@/lib/db";
 import React from "react";
 
-const AddCandidatePage = async ({ params }) => {
+const AddQuestionPage = async ({ params }) => {
   const electionID = params.id;
   const election = await db.election.findUnique({
     where: {
       id: electionID,
     },
   });
+
   const ballot = await db.ballot.findUnique({
     where: {
       id: election.ballotId,
@@ -17,9 +18,9 @@ const AddCandidatePage = async ({ params }) => {
 
   return (
     <div>
-      <NewCandidateForm ballot={ballot} electionId={electionID} />
+      <NewQuestionForm ballot={ballot} electionId={electionID} />
     </div>
   );
 };
 
-export default AddCandidatePage;
+export default AddQuestionPage;

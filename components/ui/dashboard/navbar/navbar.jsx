@@ -36,7 +36,7 @@ const Navbar = ({ session }) => {
 
   return (
     <div>
-      <div className="flex items-center justify-between p-5 md:rounded-xl bg-bgSoft">
+      <div className="flex items-center justify-between p-5 ml-1 bg-bgSoft">
         <div className="items-center hidden gap-2 md:flex">
           <span className="font-bold capitalize text-textSoft">
             {pathname.split("/").pop()}

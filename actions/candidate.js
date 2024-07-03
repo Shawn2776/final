@@ -12,7 +12,6 @@ export const addCandidate = async (values, ballotId) => {
   }
 
   const { name, position, notes } = validatedFields.data;
-  console.log(ballotID);
 
   const exisingBallot = await db.ballot.findUnique({
     where: {

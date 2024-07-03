@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { NewVoterSchema } from "@/schemas";
 
-export const addVoterToElection = async (electionId, values) => {
+export const addVoterToElection = async (values, electionId) => {
   const validatedFields = NewVoterSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -66,6 +66,17 @@ export const addVoterToElection = async (electionId, values) => {
 
   if (exisitingVoterId) {
     return { error: "Voter with this voter ID already exists" };
+  }
+
+  const exisitingVoterKey = await db.voter.findFirst({
+    where: {
+      voterKey,
+      electionId,
+    },
+  });
+
+  if (exisitingVoterKey) {
+    return { error: "Voter with this voter key already exists" };
   }
 
   try {

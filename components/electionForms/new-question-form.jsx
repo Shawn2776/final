@@ -5,7 +5,6 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { NewElectionSchema } from "@/schemas";
 import {
   Form,
   FormControl,
@@ -28,24 +27,32 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 import { useRouter } from "next/navigation";
-import FormError from "./form-error";
-import FormSuccess from "./form-success";
+import FormError from "../form-error";
+import FormSuccess from "../form-success";
+import { NewQuestionSchema } from "@/schemas";
+import { addCandidate } from "@/actions/candidate";
+import { Textarea } from "../ui/textarea";
+import AddQuestionPage from "@/app/(protected)/dashboard/elections/[id]/questions/addQuestion/page";
+import { addQuestion } from "@/actions/question";
 
-const NewElectionForm = () => {
+const NewQuestionForm = ({ ballot, electionId }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [ballotId, setBallotId] = useState(ballot.id);
 
   const [isPending, startTransition] = useTransition();
 
   const form = useForm({
-    resolver: zodResolver(NewElectionSchema),
+    resolver: zodResolver(NewQuestionSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      electionDate: "",
-      electionType: z.enum(["election", "poll"]),
+      question: "",
+      option1: "",
+      option2: "",
+      option3: "",
+      option4: "",
+      ballotId: ballotId,
     },
   });
 
@@ -54,12 +61,12 @@ const NewElectionForm = () => {
       setError("");
       setSuccess("");
 
-      newElection(values).then((data) => {
+      addQuestion(values, ballotId).then((data) => {
         setError(data.error);
         setSuccess(data.success);
 
         if (data.success) {
-          router.push(`/dashboard/elections/${data.election.id}/overview`);
+          router.push(`/dashboard/elections/${electionId}/overview`);
         }
       });
     });
@@ -69,9 +76,9 @@ const NewElectionForm = () => {
 
   return (
     <CardWrapper
-      headerLabel={"New Election"}
-      backButtonLabel={"Back to Dashboard"}
-      backButtonHref={"/elections"}
+      headerLabel={"New Question"}
+      backButtonLabel={"Back to Elections"}
+      backButtonHref={`/dashboard/elections/`}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -79,10 +86,25 @@ const NewElectionForm = () => {
             <FormField
               disabled={isPending}
               control={form.control}
-              name="name"
+              name="question"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Election Name</FormLabel>
+                  <FormLabel>Question</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} placeholder="" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              disabled={isPending}
+              control={form.control}
+              name="option1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Option One</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="" type="text" />
                   </FormControl>
@@ -94,10 +116,10 @@ const NewElectionForm = () => {
             <FormField
               disabled={isPending}
               control={form.control}
-              name="description"
+              name="option2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Option Two</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="" />
                   </FormControl>
@@ -109,12 +131,12 @@ const NewElectionForm = () => {
             <FormField
               disabled={isPending}
               control={form.control}
-              name="electionDate"
+              name="option3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date Range</FormLabel>
+                  <FormLabel>Option Three</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="5/12/2024 - 5/15/2024" />
+                    <Input {...field} placeholder="" type="text" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,54 +146,37 @@ const NewElectionForm = () => {
             <FormField
               disabled={isPending}
               control={form.control}
-              name="electionType"
+              name="option4"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Election Type</FormLabel>
+                  <FormLabel>Option Four</FormLabel>
                   <FormControl>
-                    <Select onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Election Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="election">Election</SelectItem>
-                        <SelectItem value="poll">Poll</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input {...field} placeholder="" type="text" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* <FormField
-              disabled={isPending}
+            <FormField
+              disabled
               control={form.control}
-              name="electionType"
+              name="ballotId"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Election Type</FormLabel>
-
-                  <Select onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Election Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="election">Election</SelectItem>
-                        <SelectItem value="poll">Poll</SelectItem>
-                      </SelectContent>
-                    </FormControl>
-                  </Select>
+                <FormItem className="hidden">
+                  <FormLabel>Ballot ID</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="" />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full ">
-            Create New Election
+            Create New Question
           </Button>
         </form>
       </Form>
@@ -179,4 +184,4 @@ const NewElectionForm = () => {
   );
 };
 
-export default NewElectionForm;
+export default NewQuestionForm;
